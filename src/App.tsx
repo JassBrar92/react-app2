@@ -1,10 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import './ProductList'
 import ProductList from './ProductList'
 
 function App() {
-  const [category,setCategory]=useState("");
+  const connect=()=>console.log("Connecting");
+  const disconnect=()=>console.log("Disconnecting");
+  useEffect(()=>{
+    connect();
+    return ()=>disconnect();
+  })
+ /* const [category,setCategory]=useState("");
 
 return(
   <div>
@@ -15,7 +21,7 @@ return(
     </select>
     <ProductList category={category}/>
   </div>
-)
+)*/
  /*const ref=useRef<HTMLInputElement>(null);
   useEffect(()=>{
     if(ref.current) ref.current.focus();
