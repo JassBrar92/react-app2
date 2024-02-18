@@ -2,18 +2,40 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import './ProductList'
 import ProductList from './ProductList'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 interface User{
   id:number,
   name:string
  }
 function App() {
+  /*
   const [users,setUsers]=useState<User[]>([]);
   const [error,setError]=useState([]);
   useEffect(()=>{
     axios.get<User[]>("https://jsonplaceholder.typicode.com/xusers").
     then((res)=>setUsers(res.data)).
     catch((error)=>console.log(setError(error.message)));
+  },[]);
+  return <ul>
+   <>
+   {error&&<p>{error}</p>}
+   {users.map(user=><li key={user.id}>{user.name}</li>)}
+   </>
+  </ul>
+   */
+  const [users,setUsers]=useState<User[]>([]);
+  const [error,setError]=useState([""]);
+  useEffect(()=>{
+    const fetchUser=async()=>{
+      try{
+      const res=await axios.get<User[]>("https://jsonplaceholder.typicode.com/users");
+      setUsers(res.data);
+      }
+      catch(err){
+        setError((err as AxiosError).message);
+      }
+    }
+    fetchUser();
   },[]);
   return <ul>
    <>
