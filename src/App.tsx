@@ -9,12 +9,17 @@ interface User{
  }
 function App() {
   const [users,setUsers]=useState<User[]>([]);
+  const [error,setError]=useState([]);
   useEffect(()=>{
-    axios.get<User[]>("https://jsonplaceholder.typicode.com/users").
-    then((res)=>setUsers(res.data));
+    axios.get<User[]>("https://jsonplaceholder.typicode.com/xusers").
+    then((res)=>setUsers(res.data)).
+    catch((error)=>console.log(setError(error.message)));
   },[]);
   return <ul>
+   <>
+   {error&&<p>{error}</p>}
    {users.map(user=><li key={user.id}>{user.name}</li>)}
+   </>
   </ul>
 
   /*
