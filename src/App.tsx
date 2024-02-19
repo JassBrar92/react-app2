@@ -2,19 +2,23 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import './ProductList'
 import ProductList from './ProductList'
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, CanceledError } from 'axios'
 interface User{
   id:number,
   name:string
  }
 function App() {
-  /*
+  const controller=new AbortController();
   const [users,setUsers]=useState<User[]>([]);
   const [error,setError]=useState([]);
   useEffect(()=>{
-    axios.get<User[]>("https://jsonplaceholder.typicode.com/xusers").
+    axios.get<User[]>("https://jsonplaceholder.typicode.com/users",{signal:controller.signal}).
     then((res)=>setUsers(res.data)).
-    catch((error)=>console.log(setError(error.message)));
+    catch((error)=>{
+      if (error instanceof CanceledError) return ;
+      console.log(setError(error.message));
+    });
+    return ()=>controller.abort();
   },[]);
   return <ul>
    <>
@@ -22,8 +26,8 @@ function App() {
    {users.map(user=><li key={user.id}>{user.name}</li>)}
    </>
   </ul>
-   */
-  const [users,setUsers]=useState<User[]>([]);
+   
+  /*const [users,setUsers]=useState<User[]>([]);
   const [error,setError]=useState([""]);
   useEffect(()=>{
     const fetchUser=async()=>{
@@ -42,7 +46,7 @@ function App() {
    {error&&<p>{error}</p>}
    {users.map(user=><li key={user.id}>{user.name}</li>)}
    </>
-  </ul>
+  </ul>*/
 
   /*
   const connect=()=>console.log("Connecting");
