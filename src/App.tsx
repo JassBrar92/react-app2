@@ -3,19 +3,15 @@ import './App.css'
 import './ProductList'
 import ProductList from './ProductList'
 import apiClient from './services/api-client'
-interface User{
-  id:number,
-  name:string
- }
+import UserService,{User} from './services/user-service'
 function App() {
   const [users,setUsers]=useState<User[]>([]);
   const [error,setError]=useState([]);
   const [isLoading,setLoading]=useState(false);
   useEffect(()=>{
-    const controller=new AbortController();
     setLoading(true);
-    apiClient.get<User[]>("/users",{signal:controller.signal}).
-    then((res)=>{
+   const {request,cancel}= UserService.getAllUser();
+    request.then((res)=>{
       setUsers(res.data);
       setLoading(false);
     }).
@@ -24,13 +20,13 @@ function App() {
       console.log(setError(error.message));
       setLoading(false);
     });
-    return ()=>controller.abort();
+    return ()=>cancel();
   },[]);
   const addUser=()=>{
     const originalUsers=[...users];
     const newUser={id:0,name:"jas"};
     setUsers([newUser,...users]);
-    apiClient.post("/users",newUser).
+    UserService.createUser(newUser).
     then(res=>setUsers([res.data,...users])).
     catch(err=>{
       setError(err.message);
@@ -40,7 +36,7 @@ function App() {
   const deleteUser=(user:User)=>{
     const originalUsers=[...users];
  setUsers(users.filter(u => u.id !== user.id));
- apiClient.delete("/users/"+user.id).
+ UserService.deleteUser(user.id).
  catch(err=>{
  setError(err.message);
  setUsers(originalUsers);
@@ -51,8 +47,8 @@ function App() {
     const originalUsers=[...users];
     const updatedUser={...user,name:user.name+"!"};
     setUsers(users.map(u => u.id === user.id ? updatedUser: u));
-    apiClient.patch("/users/"+user.id,updatedUser)
-    .catch(err=>{
+    
+    UserService.updateUser(updatedUser).catch(err=>{
       setError(err.message);
       setUsers(originalUsers);
     })
