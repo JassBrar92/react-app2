@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import './ProductList'
 import ProductList from './ProductList'
-import axios, { AxiosError, CanceledError } from 'axios'
+import apiClient from './services/api-client'
 interface User{
   id:number,
   name:string
@@ -14,13 +14,13 @@ function App() {
   useEffect(()=>{
     const controller=new AbortController();
     setLoading(true);
-    axios.get<User[]>("https://jsonplaceholder.typicode.com/users",{signal:controller.signal}).
+    apiClient.get<User[]>("/users",{signal:controller.signal}).
     then((res)=>{
       setUsers(res.data);
       setLoading(false);
     }).
     catch((error)=>{
-      if (error instanceof CanceledError) return ;
+      if (error instanceof apiClient) return ;
       console.log(setError(error.message));
       setLoading(false);
     });
@@ -30,7 +30,7 @@ function App() {
     const originalUsers=[...users];
     const newUser={id:0,name:"jas"};
     setUsers([newUser,...users]);
-    axios.post("https://jsonplaceholder.typicode.com/users",newUser).
+    apiClient.post("/users",newUser).
     then(res=>setUsers([res.data,...users])).
     catch(err=>{
       setError(err.message);
@@ -40,7 +40,7 @@ function App() {
   const deleteUser=(user:User)=>{
     const originalUsers=[...users];
  setUsers(users.filter(u => u.id !== user.id));
- axios.delete("https://jsonplaceholder.typicode.com/users/"+user.id).
+ apiClient.delete("/users/"+user.id).
  catch(err=>{
  setError(err.message);
  setUsers(originalUsers);
@@ -49,15 +49,13 @@ function App() {
   }
   const UpdateUser=(user:User)=>{
     const originalUsers=[...users];
-    const updatedUser={...users,name:user.name+"!"};
+    const updatedUser={...user,name:user.name+"!"};
     setUsers(users.map(u => u.id === user.id ? updatedUser: u));
-    axios.patch("https://jsonplaceholder.typicode.com/users/"+user.id,updatedUser)
+    apiClient.patch("/users/"+user.id,updatedUser)
     .catch(err=>{
       setError(err.message);
       setUsers(originalUsers);
-
     })
-
   }
   return (
    <>
