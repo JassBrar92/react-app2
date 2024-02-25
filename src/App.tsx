@@ -1,26 +1,10 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import './ProductList'
-import apiClient from './services/api-client'
 import UserService,{User} from './services/user-service'
+import useUsers from './hooks/useUsers'
 function App() {
-  const [users,setUsers]=useState<User[]>([]);
-  const [error,setError]=useState([]);
-  const [isLoading,setLoading]=useState(false);
-  useEffect(()=>{
-    setLoading(true);
-   const {request,cancel}= UserService.getAll<User>();
-    request.then((res)=>{
-      setUsers(res.data);
-      setLoading(false);
-    }).
-    catch((error)=>{
-      if (error instanceof apiClient) return ;
-      console.log(setError(error.message));
-      setLoading(false);
-    });
-    return ()=>cancel();
-  },[]);
+  const {users,error,isLoading,setUsers,setError}=useUsers();
   const addUser=()=>{
     const originalUsers=[...users];
     const newUser={id:0,name:"jas"};
